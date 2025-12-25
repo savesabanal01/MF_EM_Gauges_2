@@ -1,0 +1,24 @@
+{
+    "$schema": "./mfdevice.schema.json",
+    "Info": {
+      "Label": "NP Gauge",
+      "Type": "NPGauge",
+      "Author": "Saves",
+      "URL": "https://github.com",
+      "Version" : "1.0.0"
+    },
+    "Config": {
+      "Pins": [
+        "Backlight"
+      ],
+      "isI2C": false
+    },
+    "MessageTypes": [
+      {
+        "id": 0,
+        "label": "Interstage Turbine Temperature (ITT) Value",
+        "description": "$ will be displayed as ITT value"
+      }
+    ]
+  }
+  
