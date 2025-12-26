@@ -1,0 +1,30 @@
+{
+    "$schema": "./mfdevice.schema.json",
+    "Info": {
+      "Label": "Oil Temp and Press (OTOP) Gauge",
+      "Type": "OTOPGauge",
+      "Author": "Saves",
+      "URL": "https://github.com",
+      "Version" : "1.0.0"
+    },
+    "Config": {
+      "Pins": [
+        "Backlight"
+      ],
+      "isI2C": false
+    },
+    "MessageTypes": [
+      {
+        "id": 0,
+        "label": "Oil Temp (OT)",
+        "description": "$ will be displayed as Oil Temp (OT) value"
+      },
+     {
+        "id": 1,
+        "label": "Oil Press (OP)",
+        "description": "$ will be displayed as Oil Press (OP) value"
+      }
+
+    ]
+  }
+  

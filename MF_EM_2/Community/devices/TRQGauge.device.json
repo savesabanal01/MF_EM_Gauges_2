@@ -1,0 +1,24 @@
+{
+    "$schema": "./mfdevice.schema.json",
+    "Info": {
+      "Label": "Torque Gauge",
+      "Type": "TRQGauge",
+      "Author": "Saves",
+      "URL": "https://github.com",
+      "Version" : "1.0.0"
+    },
+    "Config": {
+      "Pins": [
+        "Backlight"
+      ],
+      "isI2C": false
+    },
+    "MessageTypes": [
+      {
+        "id": 0,
+        "label": "Torque (TRQ) Value",
+        "description": "$ will be displayed as Torque (TRQ) value"
+      }
+    ]
+  }
+  
