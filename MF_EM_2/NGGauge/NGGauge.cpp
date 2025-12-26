@@ -61,8 +61,6 @@ void NGGauge::attach(uint16_t Pin3, char *init)
     redMarkerSpr.setPivot(RED_MARKER_WIDTH / 2, 110);
     redMarkerSpr.pushImage(0, 0, RED_MARKER_WIDTH, RED_LED_HEIGHT, Red_marker);
 
-
-
 }
 
 void NGGauge::detach()
@@ -72,6 +70,7 @@ void NGGauge::detach()
     mainGaugeSpr.deleteSprite();
     needleSpr.deleteSprite();
     redLEDSpr.deleteSprite();
+    redMarkerSpr.deleteSprite();
     tft.fillScreen(TFT_BLACK);
     tft.endWrite();
 

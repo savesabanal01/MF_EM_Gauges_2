@@ -74,7 +74,9 @@ void TRQGauge::detach()
     mainGaugeSpr.deleteSprite();
     needleSpr.deleteSprite();
     redLEDSpr.deleteSprite();
+    redMarkerSpr.deleteSprite();
     dottedLineSpr.deleteSprite();
+    tft.fillScreen(TFT_BLACK);
     tft.endWrite();
 
     _initialised = false;
@@ -129,12 +131,12 @@ void TRQGauge::drawGauge()
     tenValue = (int)(TRQ / 10) % 10;
     hundredValue = (int)(TRQ / 100) % 10;
     thousandValue = (int)(TRQ / 1000) % 10;
-    minGreenAngle = scaleValue(minGreenTRQ, 0, 2500, -110, 110);
-    maxGreenAngle = scaleValue(maxGreenTRQ, 0, 2500, -110, 110);
-    minYellowAngle = scaleValue(minYellowTRQ, 0, 2500, -110, 110);
-    maxYellowAngle = scaleValue(maxYellowTRQ, 0, 2500, -110, 110);
-    redLineAngle = scaleValue(redlineTRQ, 0, 2500, -110, 110);
-    needleRotationAngle = scaleValue(TRQ, 0, 2500, -110, 110);
+    minGreenAngle = scaleValue(minGreenTRQ, 0, 2700, -110, 110);
+    maxGreenAngle = scaleValue(maxGreenTRQ, 0, 2700, -110, 110);
+    minYellowAngle = scaleValue(minYellowTRQ, 0, 2700, -110, 110);
+    maxYellowAngle = scaleValue(maxYellowTRQ, 0, 2700, -110, 110);
+    redLineAngle = scaleValue(redlineTRQ, 0, 2700, -110, 110);
+    needleRotationAngle = scaleValue(TRQ, 0, 2700, -110, 110);
 
     mainGaugeSpr.fillSprite(TFT_BLACK);
     
