@@ -9,7 +9,7 @@
     },
     "Config": {
       "Pins": [
-        "Backlight"
+        "Dummy_PIN"
       ],
       "isI2C": false
     },
