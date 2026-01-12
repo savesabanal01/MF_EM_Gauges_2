@@ -3,7 +3,7 @@
     "Info": {
       "Label": "Torque Gauge",
       "Type": "TRQGauge",
-      "Author": "Saves",
+      "Author": "Save Sabanal",
       "URL": "https://github.com",
       "Version" : "1.0.0"
     },
@@ -16,8 +16,38 @@
     "MessageTypes": [
       {
         "id": 0,
-        "label": "Torque (TRQ) Value",
+        "label": "Torque (TRQ) Value (Ft-Lb)",
         "description": "$ will be displayed as Torque (TRQ) value"
+      },     
+      {
+        "id": 1,
+        "label": "TRQ Green arc start (default 400)",
+        "description": "$ will be displayed as Torque (TRQ) Green arc start"
+      },    
+      {
+        "id": 2,
+        "label": "TRQ Green arc end (default 2400)",
+        "description": "$ will be displayed as Torque (TRQ) Green arc end"
+      },     
+      {
+        "id": 3,
+        "label": "TRQ Yellow arc start (default 2400)",
+        "description": "$ will be displayed as Torque (TRQ) Yellow arc start"
+      },    
+      {
+        "id": 4,
+        "label": "TRQ Yellow arc end (default 2500)",
+        "description": "$ will be displayed as Torque (TRQ) Yellow arc end"
+      },    
+      {
+        "id": 5,
+        "label": "TRQ Red line (default 2500)",
+        "description": "$ will be displayed as Torque (TRQ) Redline"
+      },
+        {
+        "id": 100,
+        "label": "Instrument Brightness Ratio (0 to 1)",
+        "description": "$ will be displayed as Instrument Brightness Ratio"
       }
     ]
   }

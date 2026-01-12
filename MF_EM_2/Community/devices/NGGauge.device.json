@@ -16,8 +16,28 @@
     "MessageTypes": [
       {
         "id": 0,
-        "label": "Torque (TRQ) Value",
-        "description": "$ will be displayed as Torque (TRQ) value"
+        "label": "Gas Gen. Speed (NG) Value",
+        "description": "$ will be displayed as NG value"
+      },     
+      {
+        "id": 1,
+        "label": "NG Green arc start (default 550)",
+        "description": "$ will be displayed as NG Green arc start"
+      },    
+      {
+        "id": 2,
+        "label": "NG Green arc End (default 1050)",
+        "description": "$ will be displayed as Torque (TRQ) Green arc end"
+      },     
+      {
+        "id": 3,
+        "label": "NG Redlibe (default 1050)",
+        "description": "$ will be displayed as NG Redline"
+      },
+      {
+        "id": 100,
+        "label": "Instrument Brightness Ratio (0 to 1)",
+        "description": "$ will be displayed as Instrument Brightness Ratio"
       }
     ]
   }

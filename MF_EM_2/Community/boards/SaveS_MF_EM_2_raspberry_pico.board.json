@@ -17,7 +17,7 @@
     "Info": {
       "CanInstallFirmware": true,
       "CanResetBoard": true,
-      "FirmwareBaseName": "saves_mf_em_1_raspberrypico",
+      "FirmwareBaseName": "saves_mf_em_2_raspberrypico",
       "FirmwareExtension": "uf2",
       "FriendlyName": "MF_EM_2",
       "LatestFirmwareVersion": "0.0.1",
@@ -29,10 +29,10 @@
         "NGGauge"
       ],
       "Community": {
-        "Project": "Your Project",
-        "Website": "https://YourWebsite.com",
-        "Docs": "https://YourWebsite.com",
-        "Support": "https://YourWebsite.com"
+      "Project": "Mobiflight Engine Management/Monitoring Gauges",
+        "Website": "https://www.youtube.com/@3SFlightSims",
+        "Docs": "https://github.com/savesabanal01/MF_EM_Gauges_2",
+        "Support": "https://github.com/savesabanal01/MF_EM_Gauges_2"
       }
     },
     "ModuleLimits": {
@@ -47,7 +47,7 @@
       "MaxShifters": 6,
       "MaxSteppers": 6,
       "MaxInputMultiplexer": 6,
-      "MaxCustomDevices": 5
+      "MaxCustomDevices": 1
     },
     "Pins": [
       {
@@ -64,18 +64,6 @@
       },
       {
         "isAnalog": false,
-        "isI2C": false,
-        "isPWM": true,
-        "Pin": 2
-      },
-      {
-        "isAnalog": false,
-        "isI2C": false,
-        "isPWM": true,
-        "Pin": 3
-      },
-      {
-        "isAnalog": false,
         "isI2C": true,
         "isPWM": true,
         "Pin": 4
@@ -85,24 +73,6 @@
         "isI2C": true,
         "isPWM": true,
         "Pin": 5
-      },
-      {
-        "isAnalog": false,
-        "isI2C": false,
-        "isPWM": true,
-        "Pin": 6
-      },
-      {
-        "isAnalog": false,
-        "isI2C": false,
-        "isPWM": true,
-        "Pin": 7
-      },
-      {
-        "isAnalog": false,
-        "isI2C": false,
-        "isPWM": true,
-        "Pin": 8
       },
       {
         "isAnalog": false,
@@ -133,60 +103,6 @@
         "isI2C": false,
         "isPWM": true,
         "Pin": 13
-      },
-      {
-        "isAnalog": false,
-        "isI2C": false,
-        "isPWM": true,
-        "Pin": 14
-      },
-      {
-        "isAnalog": false,
-        "isI2C": false,
-        "isPWM": true,
-        "Pin": 15
-      },
-      {
-        "isAnalog": false,
-        "isI2C": false,
-        "isPWM": false,
-        "Pin": 16
-      },
-      {
-        "isAnalog": false,
-        "isI2C": false,
-        "isPWM": false,
-        "Pin": 17
-      },
-      {
-        "isAnalog": false,
-        "isI2C": false,
-        "isPWM": false,
-        "Pin": 18
-      },
-      {
-        "isAnalog": false,
-        "isI2C": false,
-        "isPWM": false,
-        "Pin": 19
-      },
-      {
-        "isAnalog": false,
-        "isI2C": false,
-        "isPWM": false,
-        "Pin": 20
-      },
-      {
-        "isAnalog": false,
-        "isI2C": false,
-        "isPWM": false,
-        "Pin": 21
-      },
-      {
-        "isAnalog": false,
-        "isI2C": false,
-        "isPWM": false,
-        "Pin": 22
       },
       {
         "isAnalog": true,

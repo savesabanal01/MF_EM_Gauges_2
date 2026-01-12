@@ -8,6 +8,7 @@
 #include "../Common/Needle.h"
 #include "../Common/Red_led.h"
 #include "../Common/Red_marker.h"
+#include "RunningAverage.h"
 
 #define BACKGROUND_COLOR  0x1041
 
@@ -16,6 +17,9 @@ static TFT_eSprite mainGaugeSpr = TFT_eSprite(&tft);
 static TFT_eSprite needleSpr = TFT_eSprite(&tft);
 static TFT_eSprite redLEDSpr = TFT_eSprite(&tft);
 static TFT_eSprite redMarkerSpr = TFT_eSprite(&tft);
+
+int NGMessageID = -100;  // Just for tracking the messageID value
+RunningAverage RA_NGNeedleRotationAngle(5);  // Running average of last 5 values of the angle rotation
 
 /* **********************************************************************************
     This is just the basic code to set up your custom device.
@@ -47,7 +51,7 @@ void NGGauge::attach(uint16_t Pin3, char *init)
     mainGaugeSpr.setPivot(120, 120);
     mainGaugeSpr.loadFont(DotMatrix_Regular_30);
     mainGaugeSpr.setTextColor(TFT_GREEN);
-    mainGaugeSpr.setTextDatum(TR_DATUM);
+    mainGaugeSpr.setTextDatum(TC_DATUM);
 
 
     needleSpr.createSprite(NEEDLE_WIDTH, NEEDLE_HEIGHT);
@@ -60,6 +64,8 @@ void NGGauge::attach(uint16_t Pin3, char *init)
     redMarkerSpr.createSprite(RED_MARKER_WIDTH, RED_MARKER_HEIGHT);
     redMarkerSpr.setPivot(RED_MARKER_WIDTH / 2, 110);
     redMarkerSpr.pushImage(0, 0, RED_MARKER_WIDTH, RED_LED_HEIGHT, Red_marker);
+
+    RA_NGNeedleRotationAngle.clear();
 
 }
 
@@ -89,7 +95,7 @@ void NGGauge::set(int16_t messageID, char *setPoint)
         Put in your code to enter this mode (e.g. clear a display)
 
     ********************************************************************************** */
-
+    NGMessageID = messageID;
     // do something according your messageID
     switch (messageID) {
     case -1:
@@ -101,22 +107,38 @@ void NGGauge::set(int16_t messageID, char *setPoint)
         setNG(atof(setPoint));
         break;
     case 1:
-        setInstrumentBrightnessRatio(atof(setPoint));
+        setNGGreenArcStart(atof(setPoint));
         break;
-    // case 100:
-    //     setScreenRotation(atoi(setPoint));
-    // break;
+    case 2:
+        setNGGreenArcStart(atof(setPoint));
+        break;
+    case 3:
+        setNGRedline(atof(setPoint));
+        break;
+    case 100:
+        setInstrumentBrightness(atof(setPoint));
+        break;
     default:
         break;
     }
-
-    // draw the Fuel Flow Gauge
-    drawGauge();
 }
 
 void NGGauge::update()
 {
     // Do something which is required regulary
+    if (NGMessageID == -1 || powerSaveFlag == true)  // Mobiflight Connector has stopped or entered power save mode
+    {
+        tft.fillScreen(TFT_BLACK);
+        analogWrite(TFT_BL, 0);
+    }
+    else
+    {
+        float pwmOutput = 0;
+        pwmOutput = sq(instrumentBrightness) / 255.0;  // needed to correct PWM output due to human eye brightness perception
+        analogWrite(TFT_BL, pwmOutput);
+        drawGauge();
+    }
+
 }
 
 void NGGauge::drawGauge()
@@ -137,10 +159,11 @@ void NGGauge::drawGauge()
     redLineAngle = scaleValue(redlineNG, 0, 110, -110, 110);
     needleRotationAngle = scaleValue(NG, 0, 110, -110, 110);
 
+    RA_NGNeedleRotationAngle.addValue(needleRotationAngle); // add needle rotation angle value to running average
+
     mainGaugeSpr.fillSprite(TFT_BLACK);
     
     mainGaugeSpr.pushImage(0, 0, 240, 240, NG_Gauge);
-    // mainGaugeSpr.drawString(String((int)NG), 168, 170);
 
     // Draw Green Arc
     mainGaugeSpr.drawSmoothArc(120, 120, 205 / 2, 195 / 2, minGreenAngle + 180, maxGreenAngle + 180, TFT_GREEN, BACKGROUND_COLOR);
@@ -148,18 +171,14 @@ void NGGauge::drawGauge()
     redMarkerSpr.pushRotated(&mainGaugeSpr, redLineAngle, BACKGROUND_COLOR);
 
     // Draw the numbers in the digital display
-    // numberSpr.pushToSprite(&mainGaugeSpr, 160, 170, BACKGROUND_COLOR);
     mainGaugeSpr.loadFont(DotMatrix_Regular_20);
-    mainGaugeSpr.setTextDatum(TR_DATUM);
-    mainGaugeSpr.drawString(String(decNumber), 162, 170);
+    mainGaugeSpr.drawString(String(decNumber), 160, 170);
     mainGaugeSpr.loadFont(DotMatrix_Regular_30);
-    mainGaugeSpr.setTextDatum(TR_DATUM);
-    mainGaugeSpr.drawString(String(oneValue), 140, 170);
+    mainGaugeSpr.drawString(String(oneValue), 138, 170);
     if (NG >= 10)
-        mainGaugeSpr.drawString(String(tenValue), 119, 170);
+        mainGaugeSpr.drawString(String(tenValue), 116, 170);
     if (NG >= 100)
-        mainGaugeSpr.drawString(String(hundredValue), 97, 170);
-
+        mainGaugeSpr.drawString(String(hundredValue), 94, 170);
 
     // Draw the needle
     needleSpr.pushRotated(&mainGaugeSpr, needleRotationAngle, BACKGROUND_COLOR);
@@ -172,25 +191,39 @@ void NGGauge::drawGauge()
 
 }
 
+// Setters
 void NGGauge::setNG(float value)
 {
     NG = value;
 }
-
-void NGGauge::setInstrumentBrightnessRatio(float ratio)
+void  NGGauge::setNGGreenArcStart(float value)
 {
-    instrumentBrightnessRatio = ratio;
-    instrumentBrightness      = round(scaleValue(instrumentBrightnessRatio, 0, 1, 0, 255));
-    analogWrite(backlight_pin, instrumentBrightness);
+    minGreenNG = value;
+}
+
+void  NGGauge::setNGGreenArcEnd(float value)
+{
+    maxGreenNG = value;
+}
+
+void  NGGauge::setNGRedline(float value)
+{
+    redlineNG = value;
+}
+
+void NGGauge::setInstrumentBrightness(float value)
+{
+    float pwmOutput = 0;
+    instrumentBrightness = scaleValue(value, 0, 1, 0, 255);
+    pwmOutput = sq(instrumentBrightness) / 255.0;  // needed to correct PWM output due to human eye brightness perception
+    analogWrite(TFT_BL, pwmOutput);
 }
 
 void NGGauge::setPowerSave(bool enabled)
 {
     if (enabled) {
-        analogWrite(backlight_pin, 0);
         powerSaveFlag = true;
     } else {
-        analogWrite(backlight_pin, instrumentBrightness);
         powerSaveFlag = false;
     }
 }

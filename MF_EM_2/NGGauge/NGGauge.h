@@ -18,9 +18,12 @@ private:
     
 // Function declarations
     float scaleValue(float x, float in_min, float in_max, float out_min, float out_max);
-    void  setInstrumentBrightnessRatio(float ratio);
+    void  setInstrumentBrightness(float value);
     void  setNG(float value);
     void  setPowerSave(bool enabled);
+    void  setNGGreenArcStart(float value);
+    void  setNGGreenArcEnd(float value);
+    void  setNGRedline(float value);
     void  drawGauge();
 
     // Variables
@@ -34,7 +37,6 @@ private:
     float redLineAngle = 0;
 
     float    instrumentBrightness      = 255;
-    float    instrumentBrightnessRatio = 0;
     bool     powerSaveFlag             = false;
     int      prevScreenRotation        = 3;
     bool     showLogo                  = true;

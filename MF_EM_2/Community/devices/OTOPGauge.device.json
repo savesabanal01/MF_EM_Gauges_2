@@ -1,7 +1,7 @@
 {
     "$schema": "./mfdevice.schema.json",
     "Info": {
-      "Label": "Oil Temp and Press (OTOP) Gauge",
+      "Label": "Oil Temp/Press (OTOP) Gauge",
       "Type": "OTOPGauge",
       "Author": "Saves",
       "URL": "https://github.com",
@@ -19,10 +19,75 @@
         "label": "Oil Temp (OT)",
         "description": "$ will be displayed as Oil Temp (OT) value"
       },
-     {
+      {
         "id": 1,
         "label": "Oil Press (OP)",
         "description": "$ will be displayed as Oil Press (OP) value"
+      },     
+      {
+        "id": 2,
+        "label": "OT Yellow arc start (default -40 C)",
+        "description": "$ will be displayed as OT Yellow arc start"
+      },    
+      {
+        "id": 3,
+        "label": "OT Yellow arc end (default 30 C)",
+        "description": "$ will be displayed as OT Yellow arc end"
+      },     
+      {
+        "id": 4,
+       "label": "OT Green arc start (default 31 C)",
+        "description": "$ will be displayed as OT Green arc start"
+      },    
+      {
+        "id": 5,
+        "label": "OT Green arc end (default 100 C)",
+        "description": "$ will be displayed as OT Gren arc end"
+      },
+      {
+        "id": 6,
+        "label": "OT Reline min (default -40 C)",
+        "description": "$ will be displayed as OT Redline min"
+      },
+      {
+        "id": 7,
+        "label": "OT Reline max (default 100 C)",
+        "description": "$ will be displayed as OT Redline max"
+      },     
+      {
+        "id": 8,
+        "label": "OP Yellow arc start (default 40 PSI)",
+        "description": "$ will be displayed as OP Yellow arc start"
+      },    
+      {
+        "id": 9,
+        "label": "OP Yellow arc end (default 85 PSI)",
+        "description": "$ will be displayed as OP Yellow arc end"
+      },     
+      {
+        "id": 10,
+       "label": "OP Green arc start (default 85 PSI)",
+        "description": "$ will be displayed as OP Green arc start"
+      },    
+      {
+        "id": 11,
+        "label": "OP Green arc end (default 105 PSI)",
+        "description": "$ will be displayed as OP Gren arc end"
+      },
+      {
+        "id": 12,
+        "label": "OP Reline min (default 40 PSI)",
+        "description": "$ will be displayed as OP Redline min"
+      },
+      {
+        "id": 13,
+        "label": "OP Reline max (default 200 PSI)",
+        "description": "$ will be displayed as OP Redline max"
+      },
+      {
+        "id": 100,
+        "label": "Instrument Brightness Ratio (0 to 1)",
+        "description": "$ will be displayed as Instrument Brightness Ratio"
       }
 
     ]

@@ -8,6 +8,7 @@
 #include "../Common/Needle.h"
 #include "../Common/Red_led.h"
 #include "../Common/Red_marker.h"
+#include "RunningAverage.h"
 
 #define BACKGROUND_COLOR  0x1041
 
@@ -17,6 +18,9 @@ static TFT_eSprite needleSpr = TFT_eSprite(&tft);
 static TFT_eSprite redLEDSpr = TFT_eSprite(&tft);
 static TFT_eSprite redMarkerSpr = TFT_eSprite(&tft);
 static TFT_eSprite dottedLineSpr = TFT_eSprite(&tft);
+
+int TRQMessageID = -100;  // Just for tracking the messageID value
+RunningAverage RA_RPMNeedleRotationAngle(5);  // Running average of last 5 values of the angle rotation
 
 /* **********************************************************************************
     This is just the basic code to set up your custom device.
@@ -48,7 +52,7 @@ void TRQGauge::attach(uint16_t Pin3, char *init)
     mainGaugeSpr.setPivot(120, 120);
     mainGaugeSpr.loadFont(DotMatrix_Regular_30);
     mainGaugeSpr.setTextColor(TFT_GREEN);
-    mainGaugeSpr.setTextDatum(TR_DATUM);
+    mainGaugeSpr.setTextDatum(TC_DATUM);
 
     needleSpr.createSprite(NEEDLE_WIDTH, NEEDLE_HEIGHT);
     needleSpr.setPivot(NEEDLE_WIDTH / 2, 80);
@@ -64,6 +68,9 @@ void TRQGauge::attach(uint16_t Pin3, char *init)
     dottedLineSpr.createSprite(TRQ_DOTTED_LINE_WIDTH, TRQ_DOTTED_LINE_HEIGHT);
     dottedLineSpr.setPivot(TRQ_DOTTED_LINE_WIDTH / 2, 105);
     dottedLineSpr.pushImage(0, 0, TRQ_DOTTED_LINE_WIDTH, TRQ_DOTTED_LINE_HEIGHT, TRQ_Dotted_Line);
+
+    // Clear Running Average
+    RA_RPMNeedleRotationAngle.clear();
 
 }
 
@@ -94,7 +101,7 @@ void TRQGauge::set(int16_t messageID, char *setPoint)
         Put in your code to enter this mode (e.g. clear a display)
 
     ********************************************************************************** */
-
+    TRQMessageID = messageID;
     // do something according your messageID
     switch (messageID) {
     case -1:
@@ -106,22 +113,44 @@ void TRQGauge::set(int16_t messageID, char *setPoint)
         setTRQ(atof(setPoint));
         break;
     case 1:
-        setInstrumentBrightnessRatio(atof(setPoint));
+        setTRQGreenArcStart(atof(setPoint));
         break;
-    // case 100:
-    //     setScreenRotation(atoi(setPoint));
-    // break;
+    case 2:
+        setTRQGreenArcEnd(atof(setPoint));
+        break;
+    case 3:
+        setTRQYellowArcStart(atof(setPoint));
+        break;
+    case 4:
+        setTRQYellowArcEnd(atof(setPoint));
+        break;
+    case 5:
+        setTRQRedline(atof(setPoint));
+        break;
+    case 100:
+        setInstrumentBrightness(atof(setPoint));
+        break;
     default:
         break;
     }
-
-    // draw the Fuel Flow Gauge
-    drawGauge();
 }
 
 void TRQGauge::update()
 {
     // Do something which is required regulary
+    if (TRQMessageID == -1 || powerSaveFlag == true)  // Mobiflight Connector has stopped or entered power save mode
+    {
+        tft.fillScreen(TFT_BLACK);
+        analogWrite(TFT_BL, 0);
+    }
+    else
+    {
+        float pwmOutput = 0;
+        pwmOutput = sq(instrumentBrightness) / 255.0;  // needed to correct PWM output due to human eye brightness perception
+        analogWrite(TFT_BL, pwmOutput);
+        drawGauge();
+    }
+
 }
 
 void TRQGauge::drawGauge()
@@ -137,6 +166,9 @@ void TRQGauge::drawGauge()
     maxYellowAngle = scaleValue(maxYellowTRQ, 0, 2700, -110, 110);
     redLineAngle = scaleValue(redlineTRQ, 0, 2700, -110, 110);
     needleRotationAngle = scaleValue(TRQ, 0, 2700, -110, 110);
+
+    // Add needleRotationAngle value to running average
+    RA_RPMNeedleRotationAngle.addValue(needleRotationAngle);
 
     mainGaugeSpr.fillSprite(TFT_BLACK);
     
@@ -156,16 +188,16 @@ void TRQGauge::drawGauge()
     dottedLineSpr.pushRotated(&mainGaugeSpr, redLineAngle, BACKGROUND_COLOR);
 
     // Draw the numbers in the digital display
-    mainGaugeSpr.drawString(String(oneValue), 162, 170);
+    mainGaugeSpr.drawString(String(oneValue), 160, 170);
     if (TRQ >= 10)
-        mainGaugeSpr.drawString(String(tenValue), 140, 170);
+        mainGaugeSpr.drawString(String(tenValue), 138, 170);
     if (TRQ >= 100)
-        mainGaugeSpr.drawString(String(hundredValue), 119, 170);
+        mainGaugeSpr.drawString(String(hundredValue), 116, 170);
     if (TRQ >= 1000)
-        mainGaugeSpr.drawString(String(thousandValue), 97, 170);
+        mainGaugeSpr.drawString(String(thousandValue), 94, 170);
 
     // Draw the needle
-    needleSpr.pushRotated(&mainGaugeSpr, needleRotationAngle, BACKGROUND_COLOR);
+    needleSpr.pushRotated(&mainGaugeSpr, RA_RPMNeedleRotationAngle.getAverage(), BACKGROUND_COLOR);
 
     // Draw Red Led if red line is crossed
     if (TRQ >= redlineTRQ )
@@ -175,30 +207,56 @@ void TRQGauge::drawGauge()
 
 }
 
+
+// Setters
 void TRQGauge::setTRQ(float value)
 {
     TRQ = value;
 }
 
-void TRQGauge::setInstrumentBrightnessRatio(float ratio)
+void  TRQGauge::setTRQGreenArcStart(float value)
 {
-    instrumentBrightnessRatio = ratio;
-    instrumentBrightness      = round(scaleValue(instrumentBrightnessRatio, 0, 1, 0, 255));
-    analogWrite(backlight_pin, instrumentBrightness);
+    minGreenTRQ = value;
+}
+
+void  TRQGauge::setTRQGreenArcEnd(float value)
+{
+    maxGreenTRQ = value;
+}
+
+void  TRQGauge::setTRQYellowArcStart(float value)
+{
+    minYellowTRQ = value;
+}
+
+void  TRQGauge::setTRQYellowArcEnd(float value)
+{
+    maxYellowTRQ = value;
+}
+
+void  TRQGauge::setTRQRedline(float value)
+{
+    redlineTRQ = value;
+}
+
+void TRQGauge::setInstrumentBrightness(float value)
+{
+    float pwmOutput = 0;
+    instrumentBrightness = scaleValue(value, 0, 1, 0, 255);
+    pwmOutput = sq(instrumentBrightness) / 255.0;  // needed to correct PWM output due to human eye brightness perception
+    analogWrite(TFT_BL, pwmOutput);
 }
 
 void TRQGauge::setPowerSave(bool enabled)
 {
     if (enabled) {
-        analogWrite(backlight_pin, 0);
         powerSaveFlag = true;
     } else {
-        analogWrite(backlight_pin, instrumentBrightness);
         powerSaveFlag = false;
     }
 }
 
-
+// Scale function
 float TRQGauge::scaleValue(float x, float in_min, float in_max, float out_min, float out_max)
 {
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;

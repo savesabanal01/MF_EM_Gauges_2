@@ -18,10 +18,16 @@ private:
     
 // Function declarations
     float scaleValue(float x, float in_min, float in_max, float out_min, float out_max);
-    void  setInstrumentBrightnessRatio(float ratio);
+    void  setInstrumentBrightness(float value);
     void  setTRQ(float value);
     void  setPowerSave(bool enabled);
     void  drawGauge();
+    void  setTRQGreenArcStart(float value);
+    void  setTRQGreenArcEnd(float value);
+    void  setTRQYellowArcStart(float value);
+    void  setTRQYellowArcEnd(float value);
+    void  setTRQRedline(float value);
+
 
     // Variables
     float    TRQ = 0;                   // Torque value from sim
@@ -38,7 +44,6 @@ private:
     float redLineAngle = 0;
 
     float    instrumentBrightness      = 255;
-    float    instrumentBrightnessRatio = 0;
     bool     powerSaveFlag             = false;
     int      prevScreenRotation        = 3;
     bool     showLogo                  = true;

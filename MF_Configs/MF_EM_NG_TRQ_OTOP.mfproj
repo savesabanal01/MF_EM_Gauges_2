@@ -1,0 +1,189 @@
+{
+  "Name": "MF_EM_NG_TRQ_OTOP",
+  "ConfigFiles": [
+    {
+      "Label": "New file",
+      "FileName": null,
+      "ReferenceOnly": false,
+      "EmbedContent": true,
+      "ConfigItems": [
+        {
+          "Source": {
+            "XplaneDataRef": {
+              "Path": "sim/cockpit2/engine/indicators/torque_n_mtr[1]"
+            },
+            "Type": "XplaneSource"
+          },
+          "TestValue": {
+            "type": 1,
+            "Float64": 1.0,
+            "String": null
+          },
+          "Device": {
+            "Name": "Torque Gauge",
+            "CustomType": null,
+            "CustomName": "Torque Gauge",
+            "MessageType": 0,
+            "Value": "$",
+            "Type": "CustomDevice"
+          },
+          "DeviceType": "CustomDevice",
+          "DeviceName": "Torque Gauge",
+          "GUID": "01534ea4-785a-4292-91e6-b2b75aa47ca2",
+          "Active": true,
+          "Name": "Torque Left",
+          "Type": "OutputConfigItem",
+          "ModuleSerial": "MF_EM_2_TRQ/ SN-4G5-BC8",
+          "Modifiers": {
+            "Items": [
+              {
+                "Type": "Transformation",
+                "Expression": "$ * 0.7376",
+                "Active": true
+              }
+            ]
+          }
+        },
+        {
+          "Source": {
+            "XplaneDataRef": {
+              "Path": "sim/cockpit2/engine/indicators/torque_n_mtr[1]"
+            },
+            "Type": "XplaneSource"
+          },
+          "TestValue": {
+            "type": 1,
+            "Float64": 1.0,
+            "String": null
+          },
+          "Device": {
+            "Name": "Torque Gauge",
+            "CustomType": null,
+            "CustomName": "Torque Gauge",
+            "MessageType": 0,
+            "Value": "$",
+            "Type": "CustomDevice"
+          },
+          "DeviceType": "CustomDevice",
+          "DeviceName": "Torque Gauge",
+          "GUID": "7a84859b-2f36-41d7-bf8b-46d3d529f88b",
+          "Active": true,
+          "Name": "Torque Right",
+          "Type": "OutputConfigItem",
+          "ModuleSerial": "MF_EM_2_TRQ2/ SN-52C-F7C",
+          "Preconditions": [],
+          "Modifiers": {
+            "Items": [
+              {
+                "Type": "Transformation",
+                "Expression": "$ * 0.7376",
+                "Active": true
+              }
+            ]
+          }
+        },
+        {
+          "Source": {
+            "XplaneDataRef": {
+              "Path": "sim/flightmodel/engine/ENGN_oil_temp_c[0]"
+            },
+            "Type": "XplaneSource"
+          },
+          "TestValue": {
+            "type": 1,
+            "Float64": 1.0,
+            "String": null
+          },
+          "Device": {
+            "Name": "Oil Temp/Press (OTOP) Gauge",
+            "CustomType": null,
+            "CustomName": "Oil Temp/Press (OTOP) Gauge",
+            "MessageType": 0,
+            "Value": "$",
+            "Type": "CustomDevice"
+          },
+          "DeviceType": "CustomDevice",
+          "DeviceName": "Oil Temp/Press (OTOP) Gauge",
+          "GUID": "9eb2ebca-e36a-4e52-b089-bf02a5feb4e7",
+          "Active": true,
+          "Name": "Oil Temperature",
+          "Type": "OutputConfigItem",
+          "ModuleSerial": "MF_EM_2_OTOP/ SN-G52-8E1"
+        },
+        {
+          "Source": {
+            "XplaneDataRef": {
+              "Path": "sim/cockpit2/engine/indicators/oil_pressure_psi[0]"
+            },
+            "Type": "XplaneSource"
+          },
+          "TestValue": {
+            "type": 1,
+            "Float64": 1.0,
+            "String": null
+          },
+          "Device": {
+            "Name": "Oil Temp/Press (OTOP) Gauge",
+            "CustomType": null,
+            "CustomName": "Oil Temp/Press (OTOP) Gauge",
+            "MessageType": 1,
+            "Value": "$",
+            "Type": "CustomDevice"
+          },
+          "DeviceType": "CustomDevice",
+          "DeviceName": "Oil Temp/Press (OTOP) Gauge",
+          "GUID": "8a982b7e-a7fa-4c1f-a5d3-f2e381ace1c0",
+          "Active": true,
+          "Name": "Oil Pressure",
+          "Type": "OutputConfigItem",
+          "ModuleSerial": "MF_EM_2_OTOP/ SN-G52-8E1"
+        },
+        {
+          "Source": {
+            "XplaneDataRef": {
+              "Path": ""
+            },
+            "Type": "XplaneSource"
+          },
+          "TestValue": {
+            "type": 1,
+            "Float64": 1.0,
+            "String": null
+          },
+          "Device": {
+            "Name": "Gas Generator Speed (NG) Gauge",
+            "CustomType": null,
+            "CustomName": "Gas Generator Speed (NG) Gauge",
+            "MessageType": 0,
+            "Value": "$",
+            "Type": "CustomDevice"
+          },
+          "DeviceType": "CustomDevice",
+          "DeviceName": "Gas Generator Speed (NG) Gauge",
+          "GUID": "030f0977-b484-40bf-a15b-f333e92a763d",
+          "Active": true,
+          "Name": "New Output Config",
+          "Type": "OutputConfigItem",
+          "ModuleSerial": "MF_EM_2_NG/ SN-00E-460",
+          "Preconditions": [],
+          "Modifiers": {
+            "Items": [
+              {
+                "Type": "Transformation",
+                "Expression": "71.7",
+                "Active": true
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "Sim": "xplane",
+  "Aircraft": [],
+  "Features": {
+    "FSUIPC": false,
+    "ProSim": false
+  },
+  "_version": "0.9"
+}

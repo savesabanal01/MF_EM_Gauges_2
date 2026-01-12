@@ -18,9 +18,21 @@ private:
     
 // Function declarations
     float scaleValue(float x, float in_min, float in_max, float out_min, float out_max);
-    void  setInstrumentBrightnessRatio(float ratio);
+    void  setInstrumentBrightness(float ratio);
     void  setOT(float value);
     void  setOP(float value);
+    void  setOTGreenArcStart(float value);
+    void  setOTGreenArcEnd(float value);
+    void  setOTYellowArcStart(float value);
+    void  setOTYellowArcEnd(float value);
+    void  setOTRedlineMin(float value);
+    void  setOTRedlineMax(float value);
+    void  setOPGreenArcStart(float value);
+    void  setOPGreenArcEnd(float value);
+    void  setOPYellowArcStart(float value);
+    void  setOPYellowArcEnd(float value);
+    void  setOPRedlineMin(float value);
+    void  setOPRedlineMax(float value);
     void  setPowerSave(bool enabled);
     void  drawOTGauge();
     void  drawOPGauge();
@@ -47,12 +59,12 @@ private:
     float maxRedLineAngleOT = 0;
 
     // Oil pessure parameters
-    float minGreenOP = 55;
+    float minGreenOP = 85;
     float maxGreenOP = 105;
     float minYellowOP = 40;
     float maxYellowOP = 85;
-    float minGreenAngleOP = 105;
-    float maxGreenAngleOP = 200;
+    float minGreenAngleOP = 0;
+    float maxGreenAngleOP = 0;
     float minYellowAngleOP = 0;
     float maxYellowAngleOP = 0;
     float minRedLineOP = 40;
@@ -61,11 +73,9 @@ private:
     float maxRedLineAngleOP = 0;
 
     float    instrumentBrightness      = 255;
-    float    instrumentBrightnessRatio = 0;
     bool     powerSaveFlag             = false;
     int      prevScreenRotation        = 3;
     bool     showLogo                  = true;
-    uint16_t backlight_pin = 9;
 
     int oneValue = 0;
     int tenValue = 0;

@@ -7,6 +7,7 @@
 #include "../Common/Needle.h"
 #include "../Common/Red_led.h"
 #include "../Common/Red_marker.h"
+#include "RunningAverage.h"
 
 #define BACKGROUND_COLOR  0x1041
 
@@ -15,6 +16,10 @@ static TFT_eSprite mainGaugeSpr = TFT_eSprite(&tft);
 static TFT_eSprite needleOTOPSpr = TFT_eSprite(&tft);
 static TFT_eSprite redLEDSpr = TFT_eSprite(&tft);
 static TFT_eSprite redMarkerSpr = TFT_eSprite(&tft);
+
+int OTOPMessageID = -100;  // Just for tracking the messageID value
+RunningAverage RA_OTNeedleRotationAngle(5);  // Running average of last 5 values of the angle rotation
+RunningAverage RA_OPNeedleRotationAngle(5);  // Running average of last 5 values of the angle rotation
 
 /* **********************************************************************************
     This is just the basic code to set up your custom device.
@@ -56,6 +61,10 @@ void OTOPGauge::attach(uint16_t Pin3, char *init)
     redMarkerSpr.createSprite(RED_MARKER_WIDTH, RED_MARKER_HEIGHT);
     redMarkerSpr.setPivot(RED_MARKER_WIDTH / 2, 110);
     redMarkerSpr.pushImage(0, 0, RED_MARKER_WIDTH, RED_LED_HEIGHT, Red_marker);
+    
+    RA_OTNeedleRotationAngle.clear();
+    RA_OPNeedleRotationAngle.clear();
+
 
 }
 
@@ -85,7 +94,7 @@ void OTOPGauge::set(int16_t messageID, char *setPoint)
         Put in your code to enter this mode (e.g. clear a display)
 
     ********************************************************************************** */
-
+    OTOPMessageID = messageID;
     // do something according your messageID
     switch (messageID) {
     case -1:
@@ -100,22 +109,64 @@ void OTOPGauge::set(int16_t messageID, char *setPoint)
         setOP(atof(setPoint));
         break;
     case 2:
-        setInstrumentBrightnessRatio(atof(setPoint));
+        setOTYellowArcStart(atof(setPoint));
         break;
-    // case 100:
-    //     setScreenRotation(atoi(setPoint));
-    // break;
+    case 3:
+        setOTYellowArcEnd(atof(setPoint));
+        break;
+    case 4:
+        setOTGreenArcStart(atof(setPoint));
+        break;
+    case 5:
+        setOTGreenArcEnd(atof(setPoint));
+        break;
+     case 6:
+        setOTRedlineMin(atof(setPoint));
+        break;
+    case 7:
+        setOTRedlineMax(atof(setPoint));
+        break;
+    case 8:
+        setOPYellowArcStart(atof(setPoint));
+        break;
+    case 9:
+        setOPYellowArcEnd(atof(setPoint));
+        break;
+    case 10:
+        setOPGreenArcStart(atof(setPoint));
+        break;
+    case 11:
+        setOPGreenArcEnd(atof(setPoint));
+        break;
+    case 12:
+        setOPRedlineMin(atof(setPoint));
+        break;
+    case 13:
+        setOPRedlineMax(atof(setPoint));
+        break;
+    case 100:
+        setInstrumentBrightness(atof(setPoint));
+        break;
     default:
         break;
     }
-
-    // draw the Fuel Flow Gauge
-    drawGauge();
 }
 
 void OTOPGauge::update()
 {
     // Do something which is required regulary
+    if (OTOPMessageID == -1 || powerSaveFlag == true)  // Mobiflight Connector has stopped or entered power save mode
+    {
+        tft.fillScreen(TFT_BLACK);
+        analogWrite(TFT_BL, 0);
+    }
+    else
+    {
+        float pwmOutput = 0;
+        pwmOutput = sq(instrumentBrightness) / 255.0;  // needed to correct PWM output due to human eye brightness perception
+        analogWrite(TFT_BL, pwmOutput);
+        drawGauge();
+    }
 }
 
 void OTOPGauge::drawGauge()
@@ -139,16 +190,17 @@ void OTOPGauge::drawOTGauge()
     maxGreenAngleOT = scaleValue(maxGreenOT, -50, 150, -145, -35);
     
     needleRotationAngleOT = scaleValue(oilTemperature, -50, 150, -145, -35);
+    
+    RA_OTNeedleRotationAngle.addValue(needleRotationAngleOT);
 
     mainGaugeSpr.drawSmoothArc(120, 120, 205 / 2, 195 / 2, minYellowAngleOT + 180, maxYellowAngleOT + 180, TFT_YELLOW, TFT_BLACK); // Draw Yellow Line
 
     mainGaugeSpr.drawSmoothArc(120, 120, 205 / 2, 195 / 2, minGreenAngleOT + 180, maxGreenAngleOT + 180, TFT_GREEN, TFT_BLACK); // Draw Yellow Line
 
-    needleOTOPSpr.pushRotated(&mainGaugeSpr, needleRotationAngleOT, BACKGROUND_COLOR);
-
     redMarkerSpr.pushRotated(&mainGaugeSpr, minRedLineAngleOT, BACKGROUND_COLOR); // Draw the minimum red line for Oil Temperature
     redMarkerSpr.pushRotated(&mainGaugeSpr, maxRedLineAngleOT, BACKGROUND_COLOR); // Draw the maximum red line for Oil Temperature
 
+    needleOTOPSpr.pushRotated(&mainGaugeSpr, RA_OTNeedleRotationAngle.getAverage(), BACKGROUND_COLOR);
     // Draw the Red LED
     if (oilTemperature <= minRedLineOT || oilTemperature >= maxRedLineOT)
         redLEDSpr.pushToSprite(&mainGaugeSpr, 110, 204, BACKGROUND_COLOR);
@@ -206,6 +258,8 @@ void OTOPGauge::drawOPGauge()
         needleRotationAngleOP = scaleValue(oilPressure, 120, 200, 60, 40);
     else
         needleRotationAngleOP = scaleValue(oilPressure, 40, 120, 120, 60);
+    
+    RA_OPNeedleRotationAngle.addValue(needleRotationAngleOP);
 
     mainGaugeSpr.drawSmoothArc(120, 120, 205 / 2, 195 / 2, maxYellowAngleOP + 180, minYellowAngleOP + 180, TFT_YELLOW, TFT_BLACK); // Draw Yellow Line
 
@@ -214,7 +268,7 @@ void OTOPGauge::drawOPGauge()
     redMarkerSpr.pushRotated(&mainGaugeSpr, minRedLineAngleOP, BACKGROUND_COLOR); // Draw the minimum red line for Oil Temperature
     redMarkerSpr.pushRotated(&mainGaugeSpr, maxRedLineAngleOP, BACKGROUND_COLOR); // Draw the maximum red line for Oil Temperature
 
-    needleOTOPSpr.pushRotated(&mainGaugeSpr, needleRotationAngleOP, BACKGROUND_COLOR);
+    needleOTOPSpr.pushRotated(&mainGaugeSpr, RA_OPNeedleRotationAngle.getAverage(), BACKGROUND_COLOR);
 
     // Draw the red led
     if (oilPressure <= minRedLineOP || oilPressure >= maxRedLineOP)
@@ -222,6 +276,7 @@ void OTOPGauge::drawOPGauge()
 
 }
 
+// Setters
 void OTOPGauge::setOT(float value)
 {
     oilTemperature = value;
@@ -232,21 +287,80 @@ void OTOPGauge::setOP(float value)
     oilPressure = value;
 }
 
-
-void OTOPGauge::setInstrumentBrightnessRatio(float ratio)
+void  OTOPGauge::setOTGreenArcStart(float value)
 {
-    instrumentBrightnessRatio = ratio;
-    instrumentBrightness      = round(scaleValue(instrumentBrightnessRatio, 0, 1, 0, 255));
-    analogWrite(backlight_pin, instrumentBrightness);
+    minGreenOT = value;
+}
+
+void  OTOPGauge::setOTGreenArcEnd(float value)
+{
+    maxGreenOT = value;
+}
+
+void  OTOPGauge::setOTYellowArcStart(float value)
+{
+    minYellowOT = value;
+}
+
+void  OTOPGauge::setOTYellowArcEnd(float value)
+{
+    maxYellowOT = value;
+}
+
+void  OTOPGauge::setOTRedlineMin(float value)
+{
+    minRedLineOT = value;
+}
+
+void  OTOPGauge::setOTRedlineMax(float value)
+{
+    maxRedLineOT = value;
+}
+
+void  OTOPGauge::setOPGreenArcStart(float value)
+{
+    minGreenOP = value;
+}
+
+void  OTOPGauge::setOPGreenArcEnd(float value)
+{
+    maxGreenOP = value;
+}
+
+void  OTOPGauge::setOPYellowArcStart(float value)
+{
+    minYellowOP = value;
+}
+
+void  OTOPGauge::setOPYellowArcEnd(float value)
+{
+    maxYellowOP = value;
+}
+
+void  OTOPGauge::setOPRedlineMin(float value)
+{
+    minRedLineOP = value;
+}
+
+void  OTOPGauge::setOPRedlineMax(float value)
+{
+    maxRedLineOP = value;
+}
+
+
+void OTOPGauge::setInstrumentBrightness(float value)
+{
+    float pwmOutput = 0;
+    instrumentBrightness = scaleValue(value, 0, 1, 0, 255);
+    pwmOutput = sq(instrumentBrightness) / 255.0;  // needed to correct PWM output due to human eye brightness perception
+    analogWrite(TFT_BL, pwmOutput);
 }
 
 void OTOPGauge::setPowerSave(bool enabled)
 {
     if (enabled) {
-        analogWrite(backlight_pin, 0);
         powerSaveFlag = true;
     } else {
-        analogWrite(backlight_pin, instrumentBrightness);
         powerSaveFlag = false;
     }
 }
